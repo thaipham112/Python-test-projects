@@ -1,0 +1,94 @@
+from tkinter import *
+
+window = Tk()
+window.title("Tic Tac Toe")
+window.geometry("300x400")
+turn = 1
+choice = [[None, None, None],[None, None, None],[None, None, None]]
+board = [[None, None, None],[None, None, None],[None, None, None]]
+a = 0
+def change(button, i, j):
+    global turn
+    global choice
+    if (turn % 2 == 1):
+        Label(window, text="X").place(x=button.winfo_x(), y=button.winfo_y())
+    else:
+        Label(window, text="O").place(x=button.winfo_x(), y=button.winfo_y())
+    button.destroy()
+    checkbutton(i, j)
+    checkwin()
+    turn = turn + 1
+    print("Choice: " + str(choice))
+    print("Board: " + str(board))
+
+def checkbutton(i, j):
+    if turn % 2 == 1:
+        choice[i][j] = "X"
+    else:
+        choice[i][j] = "O"
+
+def checkwin():
+    for i in range(3):
+        if (choice[i][0] == choice[i][1] == choice [i][2] and choice [i][0] != None):
+            Label(window, text = choice[i][0] + " wins!", font = ("Times New Roman",25)).place(x=100, y = 350)
+            disable_buttons()
+            return
+        elif (choice[0][i] == choice[1][i] == choice [2][i] and choice [0][i] != None):
+            Label(window, text=choice[0][i] + " wins!", font=("Times New Roman", 25)).place(x=100, y = 350)
+            disable_buttons()
+            return
+        elif ((choice[0][0] == choice[1][1] == choice[2][2] or choice[0][2] == choice[1][1] == choice[2][0]) and
+                choice[1][1] != None):
+            Label(window, text=choice[1][1] + " wins!", font=("Times New Roman", 25)).place(x=100, y = 350)
+            disable_buttons()
+            return
+        elif (checkempty() == True):
+            Label(window, text="Draw!", font=("Times New Roman", 25)).place(x=100, y = 350)
+
+
+def checkempty():
+    global a
+    a = 0
+    for i in range(3):
+        for j in range(3):
+            if choice[i][j] == None:
+                a = a + 1
+            else:
+                pass
+    if a == 0: return True
+    elif a >= 1: return False
+
+def disable_buttons():
+    for i in range(3):
+        for j in range(3):
+            if board[i][j].winfo_exists():
+                board[i][j]['state'] = DISABLED
+
+
+canvas = Canvas(window, width=300, height=300)
+canvas.pack()
+
+for i in range(3):
+    for j in range(3):
+        board[i][j] = Button(window, text = str(3*i + j + 1), command = lambda i=i, j=j:change(board[i][j], i, j))
+        board[i][j].place( x=50 + j*100, y = 50+100*i)
+
+def reset_game():
+    global choice
+    global a
+    global turn
+    global board
+    turn = 1
+    a = 0
+    choice = [[None, None, None],[None, None, None],[None, None, None]]
+    board = [[None, None, None], [None, None, None], [None, None, None]]
+    for i in range(3):
+        for j in range(3):
+            board[i][j] = Button(window, text=str(3 * i + j + 1), command=lambda i=i, j=j: change(board[i][j], i, j))
+            board[i][j]['state'] = NORMAL
+            board[i][j].place(x=50 + j * 100, y=50 + 100 * i)
+
+reset_button = Button(window, text="Reset", command=reset_game)
+reset_button.pack()
+
+window.mainloop()
